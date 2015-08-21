@@ -191,21 +191,21 @@ gst_handdetect_class_init (GstHanddetectClass * klass)
       g_param_spec_boolean ("display",
           "Display",
           "Whether the detected hands are highlighted in output frame",
-          TRUE, G_PARAM_READWRITE)
+          TRUE, (GParamFlags) (G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS))
       );
   g_object_class_install_property (gobject_class,
       PROP_PROFILE_FIST,
       g_param_spec_string ("profile_fist",
           "Profile_fist",
           "Location of HAAR cascade file (fist gesture)",
-          HAAR_FILE_FIST, G_PARAM_READWRITE)
+          HAAR_FILE_FIST, (GParamFlags) G_PARAM_READWRITE)
       );
   g_object_class_install_property (gobject_class,
       PROP_PROFILE_PALM,
       g_param_spec_string ("profile_palm",
           "Profile_palm",
           "Location of HAAR cascade file (palm gesture)",
-          HAAR_FILE_PALM, G_PARAM_READWRITE)
+          HAAR_FILE_PALM, (GParamFlags) G_PARAM_READWRITE)
       );
   /* FIXME: property name needs fixing */
   g_object_class_install_property (gobject_class,
@@ -213,7 +213,7 @@ gst_handdetect_class_init (GstHanddetectClass * klass)
       g_param_spec_uint ("ROI_X",
           "ROI_X",
           "X of left-top pointer in region of interest \nGestures in the defined region of interest will emit messages",
-          0, UINT_MAX, 0, G_PARAM_READWRITE)
+          0, UINT_MAX, 0, (GParamFlags) G_PARAM_READWRITE)
       );
   /* FIXME: property name needs fixing */
   g_object_class_install_property (gobject_class,
@@ -221,7 +221,7 @@ gst_handdetect_class_init (GstHanddetectClass * klass)
       g_param_spec_uint ("ROI_Y",
           "ROI_Y",
           "Y of left-top pointer in region of interest \nGestures in the defined region of interest will emit messages",
-          0, UINT_MAX, 0, G_PARAM_READWRITE)
+          0, UINT_MAX, 0, (GParamFlags) G_PARAM_READWRITE)
       );
   /* FIXME: property name needs fixing */
   g_object_class_install_property (gobject_class,
@@ -229,7 +229,7 @@ gst_handdetect_class_init (GstHanddetectClass * klass)
       g_param_spec_uint ("ROI_WIDTH",
           "ROI_WIDTH",
           "WIDTH of left-top pointer in region of interest \nGestures in the defined region of interest will emit messages",
-          0, UINT_MAX, 0, G_PARAM_READWRITE)
+          0, UINT_MAX, 0, (GParamFlags) G_PARAM_READWRITE)
       );
   /* FIXME: property name needs fixing */
   g_object_class_install_property (gobject_class,
@@ -237,7 +237,7 @@ gst_handdetect_class_init (GstHanddetectClass * klass)
       g_param_spec_uint ("ROI_HEIGHT",
           "ROI_HEIGHT",
           "HEIGHT of left-top pointer in region of interest \nGestures in the defined region of interest will emit messages",
-          0, UINT_MAX, 0, G_PARAM_READWRITE)
+          0, UINT_MAX, 0, (GParamFlags) G_PARAM_READWRITE)
       );
 
   gst_element_class_set_static_metadata (element_class,
@@ -449,12 +449,12 @@ gst_handdetect_transform_ip (GstOpencvVideoFilter * transform,
     /* send message:
      * if the center point is in the region of interest, OR,
      * if the region of interest remains default as (0,0,0,0)*/
-    if ((c.x >= filter->roi_x && c.x <= (filter->roi_x + filter->roi_width)
-            && c.y >= filter->roi_y
-            && c.y <= (filter->roi_y + filter->roi_height))
-        || (filter->roi_x == 0
-            && filter->roi_y == 0
-            && filter->roi_width == 0 && filter->roi_height == 0)) {
+    if (((guint) c.x >= filter->roi_x
+            && (guint) c.x <= (filter->roi_x + filter->roi_width)
+            && (guint) c.y >= filter->roi_y
+            && (guint) c.y <= (filter->roi_y + filter->roi_height))
+        || (filter->roi_x == 0 && filter->roi_y == 0 && filter->roi_width == 0
+            && filter->roi_height == 0)) {
       /* Define structure for message post */
       s = gst_structure_new ("hand-gesture",
           "gesture", G_TYPE_STRING, "fist",
@@ -540,12 +540,12 @@ gst_handdetect_transform_ip (GstOpencvVideoFilter * transform,
       /* send message:
        * if the center point is in the region of interest, OR,
        * if the region of interest remains default as (0,0,0,0)*/
-      if ((c.x >= filter->roi_x && c.x <= (filter->roi_x + filter->roi_width)
-              && c.y >= filter->roi_y
-              && c.y <= (filter->roi_y + filter->roi_height))
-          || (filter->roi_x == 0
-              && filter->roi_y == 0
-              && filter->roi_width == 0 && filter->roi_height == 0)) {
+      if (((guint) c.x >= filter->roi_x
+              && (guint) c.x <= (filter->roi_x + filter->roi_width)
+              && (guint) c.y >= filter->roi_y
+              && (guint) c.y <= (filter->roi_y + filter->roi_height))
+          || (filter->roi_x == 0 && filter->roi_y == 0 && filter->roi_width == 0
+              && filter->roi_height == 0)) {
         /* Define structure for message post */
         s = gst_structure_new ("hand-gesture",
             "gesture", G_TYPE_STRING, "palm",
